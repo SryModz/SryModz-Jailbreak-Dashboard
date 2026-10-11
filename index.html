@@ -1,0 +1,793 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08080e">
+<title>SryModz | Jailbreak Dashboard</title>
+<style>
+:root{
+  --bg:#08080e;--panel:#11111c;--panel2:#171725;
+  --border:rgba(255,255,255,.09);--text:#f5f4ff;
+  --muted:#9695ad;--purple:#a855f7;--pink:#ff38a8;
+  --cyan:#24e5ff;--green:#44f6aa;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 70% 0%,#32154d55,transparent 40%),var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.rainbow{background:linear-gradient(90deg,#ff3b70,#ffb33f,#efff56,#44f6aa,#24e5ff,#a855f7,#ff38a8);background-size:300%;background-clip:text;-webkit-background-clip:text;color:transparent;animation:rainbow 5s linear infinite}
+@keyframes rainbow{to{background-position:300%}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow{50%{box-shadow:0 0 35px #a855f755}}
+.topbar{height:74px;position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px 25px;background:#090910ed;backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{width:43px;height:43px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(135deg,var(--pink),var(--purple));font-weight:1000;font-size:21px;box-shadow:0 0 20px #a855f755}
+.brand-name{font-size:22px;font-weight:950;letter-spacing:-1px}
+.brand-sub{font-size:9px;color:var(--muted);letter-spacing:2px;margin-top:4px}
+.actions{display:flex;align-items:center;gap:9px}
+.status{font-size:11px;color:var(--muted);padding:10px 12px;border:1px solid var(--border);border-radius:20px}
+.dot{display:inline-block;width:7px;height:7px;background:var(--green);border-radius:50%;margin-right:7px;box-shadow:0 0 9px var(--green)}
+.btn{padding:11px 15px;color:white;background:var(--panel2);border:1px solid var(--border);border-radius:11px;font-weight:750;font-size:12px;transition:.2s}
+.btn:hover{transform:translateY(-2px);border-color:#a855f788}
+.btn-primary{background:linear-gradient(110deg,#9637ed,#633cf0);border:0;box-shadow:0 4px 22px #8b35e933}
+.layout{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:calc(100vh - 74px)}
+.sidebar{position:sticky;top:74px;height:calc(100vh - 74px);overflow-y:auto;padding:18px 12px;border-right:1px solid var(--border);background:#0b0b13c9}
+.nav-label{font-size:10px;font-weight:850;color:#73738c;letter-spacing:2px;padding:17px 10px 8px}
+.nav{width:100%;display:flex;align-items:center;gap:11px;text-align:left;padding:11px 12px;margin:3px 0;color:#b9b8cc;background:transparent;border:1px solid transparent;border-radius:10px;font-size:12px}
+.nav:hover{background:#ffffff08;color:white}
+.nav.active{color:white;background:linear-gradient(100deg,#a855f72b,#24e5ff0a);border-color:#a855f744;box-shadow:inset 3px 0 var(--purple)}
+.nav-icon{width:21px;text-align:center;font-size:16px}
+.side-box{padding:14px;margin-top:20px;background:var(--panel);border:1px solid var(--border);border-radius:13px}
+.side-box strong{font-size:12px}
+.side-box p{color:var(--muted);font-size:10px;line-height:1.6}
+main{min-width:0;padding:27px;max-width:1600px;width:100%;margin:auto}
+.page{display:none;animation:fadeIn .25s ease}
+.page.active{display:block}
+.hero{position:relative;overflow:hidden;padding:30px;margin-bottom:22px;border:1px solid #a855f744;border-radius:21px;background:radial-gradient(ellipse at 85% 0%,#24e5ff20,transparent 40%),radial-gradient(ellipse at 70% 100%,#a855f733,transparent 50%),linear-gradient(130deg,#191525,#0e0e18 70%)}
+.hero:after{content:"SRY";position:absolute;right:0;bottom:-62px;font-size:190px;font-weight:1000;color:#ffffff06;pointer-events:none}
+.eyebrow{font-size:10px;color:#c9a2ff;font-weight:900;letter-spacing:3px;text-transform:uppercase;margin-bottom:13px}
+h1{position:relative;z-index:1;font-size:clamp(28px,4vw,45px);letter-spacing:-1.5px;line-height:1.12;margin:0}
+.hero p{position:relative;z-index:1;color:#aaa9c0;font-size:13px;line-height:1.7;max-width:650px;margin:14px 0 20px}
+.hero-buttons{position:relative;z-index:1;display:flex;gap:10px;flex-wrap:wrap}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:27px 0 14px}
+.section-head h2{margin:0;font-size:18px}
+.section-head p{color:var(--muted);font-size:11px;margin:6px 0 0}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:25px}
+.stat,.card,.game-card{background:linear-gradient(145deg,#171725,#101019);border:1px solid var(--border);border-radius:15px}
+.stat{padding:17px}
+.stat-label{font-size:11px;color:var(--muted)}
+.stat-number{font-size:27px;font-weight:950;margin:12px 0 5px}
+.stat-note{font-size:10px;color:var(--muted)}
+.game-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.game-card{padding:18px;min-height:140px;color:white;text-align:left;transition:.2s}
+.game-card:hover{transform:translateY(-3px);border-color:#a855f777}
+.game-icon{font-size:24px}
+.game-card h3{font-size:14px;margin:14px 0 7px}
+.game-card p{font-size:11px;color:var(--muted);line-height:1.5;margin:0}
+.content-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,1fr);gap:15px}
+.card{padding:20px;margin-bottom:15px;min-width:0}
+.card h3{font-size:14px;margin:0 0 7px}
+.desc{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:17px}
+.option-list{display:grid;gap:9px}
+.option{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px;border:1px solid #ffffff0c;border-radius:11px;background:#ffffff04}
+.option-title{font-size:12px;font-weight:750}
+.option-desc{font-size:10px;color:var(--muted);line-height:1.5;margin-top:5px}
+.switch{position:relative;flex-shrink:0;width:41px;height:23px;border:0;border-radius:30px;background:#373747;padding:0}
+.switch:after{content:"";position:absolute;width:16px;height:16px;top:3.5px;left:4px;background:#bdbdcd;border-radius:50%;transition:.2s}
+.switch.on{background:linear-gradient(90deg,var(--purple),var(--pink))}
+.switch.on:after{left:21px;background:white}
+.control{padding:14px;margin-bottom:10px;border:1px solid #ffffff0c;border-radius:12px;background:#ffffff04}
+.control-head{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px}
+.control-head output{color:var(--cyan);font-weight:850}
+input[type=range]{width:100%;accent-color:var(--purple);margin-top:13px;cursor:pointer}
+.field{display:grid;gap:7px;margin:14px 0}
+.field label{font-size:11px;color:#c8c7dc;font-weight:750}
+.field input,.field select{width:100%;padding:12px;border-radius:10px;background:#0b0b13;border:1px solid var(--border);color:white;outline:none}
+.field input:focus,.field select:focus{border-color:var(--purple)}
+.field select option{background:#11111c}
+.pill{display:inline-block;font-size:10px;padding:6px 9px;border-radius:20px;border:1px solid #a855f744;background:#a855f711;color:#d7b6ff}
+.profile-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.profile{padding:18px;border:1px solid var(--border);border-radius:14px;background:var(--panel)}
+.profile h3{font-size:14px;margin:13px 0 8px}
+.profile p{font-size:11px;color:var(--muted);line-height:1.6;min-height:35px}
+.profile .btn{width:100%;margin-top:12px}
+.player-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.player-row:last-child{border:0}
+.player-name{font-size:12px;font-weight:800;overflow-wrap:anywhere}
+.player-meta{font-size:10px;color:var(--muted);margin-top:4px}
+.notice{padding:13px;border:1px solid #24e5ff28;border-radius:10px;background:#24e5ff08;color:#b0e6ed;font-size:11px;line-height:1.7}
+.footer{text-align:center;padding:28px 0 8px;color:#66657b;font-size:10px;letter-spacing:2px}
+.toast{position:fixed;right:20px;bottom:20px;z-index:90;padding:14px 18px;border:1px solid #a855f777;border-radius:12px;background:#181323;color:white;box-shadow:0 10px 35px #0008;opacity:0;transform:translateY(12px);transition:.25s;pointer-events:none;font-size:12px}
+.toast.show{opacity:1;transform:translateY(0)}
+.hidden{display:none!important}
+
+/* Full-screen jailbreak celebration */
+.celebration{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:#05040de8;backdrop-filter:blur(10px);overflow:hidden}
+.celebration.show{display:flex}
+.celebration-card{position:relative;z-index:2;text-align:center;width:min(780px,100%);padding:clamp(25px,6vw,65px) 20px;border:1px solid #ffffff25;border-radius:28px;background:linear-gradient(140deg,#191328f5,#0b0b16f7);box-shadow:0 0 90px #a855f733;animation:pop .45s cubic-bezier(.2,.8,.2,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.65)}to{opacity:1;transform:scale(1)}}
+.celebration-icon{font-size:clamp(45px,8vw,75px);margin-bottom:16px;filter:drop-shadow(0 0 22px #a855f7)}
+.celebration h2{font-size:clamp(30px,7vw,68px);font-weight:1000;line-height:1.05;letter-spacing:-2px;margin:0}
+.celebration p{color:#c4c1d8;font-size:clamp(13px,2vw,17px);line-height:1.7;margin:18px auto 24px;max-width:530px}
+.celebration .btn{font-size:13px;padding:13px 22px}
+#confettiCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+@media(max-width:1100px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.content-grid{grid-template-columns:1fr}.profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+ .topbar{height:auto;min-height:68px;padding:10px 13px}.brand-name{font-size:19px}.brand-sub{font-size:8px}
+ .status{display:none}.actions .btn{font-size:10px;padding:10px}
+ .layout{grid-template-columns:1fr}
+ .sidebar{position:sticky;top:68px;z-index:9;width:100%;height:auto;padding:7px;border-right:0;border-bottom:1px solid var(--border);overflow-x:auto;overflow-y:hidden;background:#0b0b13f7}
+ .nav-label,.side-box{display:none}
+ .sidebar nav{display:flex;gap:4px;width:max-content}
+ .nav{width:auto;flex-shrink:0;padding:10px;font-size:11px}
+ main{padding:15px 12px}.hero{padding:23px}.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .profile-grid{grid-template-columns:1fr}.stat{padding:13px}.stat-number{font-size:23px}
+}
+@media(max-width:390px){.game-grid{grid-template-columns:1fr}.brand-icon{width:36px;height:36px}.brand-name{font-size:17px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">S</div>
+    <div>
+      <div class="brand-name rainbow">SryModz</div>
+      <div class="brand-sub">Ultimate Gaming Dashboard</div>
+    </div>
+  </div>
+  <div class="actions">
+    <div class="status"><span class="dot"></span>Dashboard bereit</div>
+    <button class="btn" id="soundBtn" type="button">♪ Sound: Aus</button>
+    <button class="btn btn-primary" id="jailbreakBtn" type="button">JAILBREAK ✦</button>
+  </div>
+</header>
+
+<div class="layout">
+<aside class="sidebar">
+  <div class="nav-label">Main Menu</div>
+  <nav>
+    <button class="nav active" data-page="home"><span class="nav-icon">⌂</span>Dashboard</button>
+    <button class="nav" data-page="gta6"><span class="nav-icon">🌆</span>GTA 6 Hacks</button>
+    <button class="nav" data-page="gta5"><span class="nav-icon">🚘</span>GTA 5 Hacks</button>
+    <button class="nav" data-page="warzone"><span class="nav-icon">🎯</span>Warzone Hacks</button>
+    <button class="nav" data-page="bo2"><span class="nav-icon">💀</span>Black Ops 2 Hacks</button>
+    <div class="nav-label">Aim & Combat</div>
+    <button class="nav" data-page="norecoil"><span class="nav-icon">⌁</span>No Recoil</button>
+    <button class="nav" data-page="recoil"><span class="nav-icon">↕</span>Recoil Control</button>
+    <button class="nav" data-page="aim"><span class="nav-icon">⊕</span>Aim Settings</button>
+    <button class="nav" data-page="sensitivity"><span class="nav-icon">◈</span>Sensitivity</button>
+    <button class="nav" data-page="crosshair"><span class="nav-icon">✛</span>Crosshair</button>
+    <div class="nav-label">Visuals</div>
+    <button class="nav" data-page="visuals"><span class="nav-icon">◉</span>Visuals / ESP</button>
+    <button class="nav" data-page="hud"><span class="nav-icon">▣</span>HUD Settings</button>
+    <button class="nav" data-page="fov"><span class="nav-icon">◎</span>FOV Settings</button>
+    <button class="nav" data-page="players"><span class="nav-icon">♙</span>Player List</button>
+    <div class="nav-label">Personal</div>
+    <button class="nav" data-page="profiles"><span class="nav-icon">▤</span>Profiles</button>
+    <button class="nav" data-page="settings"><span class="nav-icon">⚙</span>Settings</button>
+  </nav>
+  <div class="side-box"><strong class="rainbow">SryModz Premium Style</strong><p>Dein Gaming-Dashboard. Passe Layout, Werte und persönliche Profile an.</p></div>
+</aside>
+
+<main>
+<!-- HOME -->
+<section class="page active" id="page-home">
+  <div class="hero">
+    <div class="eyebrow">✦ Your gaming setup</div>
+    <h1 id="heroTitle">Welcome to <span class="rainbow">SryModz</span></h1>
+    <p>Dein persönliches Neon-Gaming-Dashboard mit zahlreichen Kategorien, detaillierten Reglern und gespeicherten Einstellungen.</p>
+    <div class="hero-buttons">
+      <button class="btn btn-primary" data-goto="norecoil">No Recoil Settings ↗</button>
+      <button class="btn" data-goto="profiles">Profile öffnen</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Game Bereiche</div><div class="stat-number">4</div><div class="stat-note">GTA · Warzone · BO2</div></div>
+    <div class="stat"><div class="stat-label">Aktive Optionen</div><div class="stat-number" id="enabledCount">0</div><div class="stat-note">Deine Schalter</div></div>
+    <div class="stat"><div class="stat-label">Konfigurationen</div><div class="stat-number">12+</div><div class="stat-note">Kategorien und Regler</div></div>
+    <div class="stat"><div class="stat-label">Dashboard</div><div class="stat-number" style="font-size:22px">READY</div><div class="stat-note">Lokale Einstellungen</div></div>
+  </div>
+  <div class="section-head"><div><h2>Game Center</h2><p>Wähle ein Spiel oder eine Einstellungskategorie.</p></div></div>
+  <div class="game-grid">
+    <button class="game-card" data-goto="gta6"><span class="game-icon">🌆</span><h3>GTA 6 Hacks</h3><p>HUD, Profil und Anzeigeoptionen.</p></button>
+    <button class="game-card" data-goto="gta5"><span class="game-icon">🚘</span><h3>GTA 5 Hacks</h3><p>Fahrzeug-, HUD- und Profiloptionen.</p></button>
+    <button class="game-card" data-goto="warzone"><span class="game-icon">🎯</span><h3>Warzone Hacks</h3><p>Trainings- und Anzeigeprofile.</p></button>
+    <button class="game-card" data-goto="bo2"><span class="game-icon">💀</span><h3>Black Ops 2 Hacks</h3><p>BO2-Profil und individuelle Anzeigeoptionen.</p></button>
+    <button class="game-card" data-goto="norecoil"><span class="game-icon">⌁</span><h3>No Recoil</h3><p>Stärke, horizontaler und vertikaler Wert.</p></button>
+    <button class="game-card" data-goto="aim"><span class="game-icon">⊕</span><h3>Aim Settings</h3><p>Empfindlichkeit, Deadzone und Trainingswerte.</p></button>
+    <button class="game-card" data-goto="visuals"><span class="game-icon">◉</span><h3>Visuals / ESP</h3><p>Visuelle Dashboard-Elemente.</p></button>
+    <button class="game-card" data-goto="crosshair"><span class="game-icon">✛</span><h3>Crosshair</h3><p>Größe, Abstand, Farbe und Stil.</p></button>
+    <button class="game-card" data-goto="profiles"><span class="game-icon">▤</span><h3>Profile</h3><p>Konfigurationen speichern und laden.</p></button>
+  </div>
+</section>
+
+<!-- GTA 6 -->
+<section class="page" id="page-gta6">
+  <div class="hero"><div class="eyebrow">Game setup / 01</div><h1><span class="rainbow">GTA 6</span> Hacks</h1><p>Individuelle Profil-, HUD- und Anzeigepräferenzen.</p></div>
+  <div class="content-grid"><div class="card"><h3>GTA 6 Optionen</h3><p class="desc">Wähle die gewünschten Dashboard-Optionen.</p><div class="option-list" id="gta6Options"></div></div>
+  <div class="card"><h3>GTA 6 Profil</h3><div class="field"><label>Profilname</label><input data-field="gta6Name" placeholder="Mein Profil" maxlength="24"></div><div class="field"><label>Spielstil</label><select data-field="gta6Style"><option>Balanced</option><option>Performance</option><option>Immersion</option></select></div><button class="btn btn-primary" data-save-fields="gta6">Profil speichern</button></div></div>
+</section>
+
+<!-- GTA 5 -->
+<section class="page" id="page-gta5">
+  <div class="hero"><div class="eyebrow">Game setup / 02</div><h1><span class="rainbow">GTA 5</span> Hacks</h1><p>Deine persönliche GTA-5-Konfiguration und Spielanzeige.</p></div>
+  <div class="content-grid"><div class="card"><h3>GTA 5 Optionen</h3><p class="desc">Verwalte deine Anzeigepräferenzen.</p><div class="option-list" id="gta5Options"></div></div>
+  <div class="card"><h3>Spielprofil</h3><div class="field"><label>Spielername</label><input data-field="gta5Name" maxlength="24" placeholder="SryModzPlayer"></div><div class="field"><label>Spielmodus</label><select data-field="gta5Mode"><option>Freemode</option><option>Story Mode</option><option>Private Session</option></select></div><button class="btn btn-primary" data-save-fields="gta5">Profil speichern</button></div></div>
+</section>
+
+<!-- WARZONE -->
+<section class="page" id="page-warzone">
+  <div class="hero"><div class="eyebrow">Game setup / 03</div><h1><span class="rainbow">Warzone</span> Hacks</h1><p>Persönliche Anzeige- und Trainingspräferenzen für dein Profil.</p></div>
+  <div class="content-grid"><div class="card"><h3>Warzone Optionen</h3><p class="desc">Konfiguriere die gewünschten lokalen Optionen.</p><div class="option-list" id="warzoneOptions"></div></div>
+  <div class="card"><h3>Match-Profil</h3><div class="field"><label>Profilname</label><input data-field="warzoneName" maxlength="24" placeholder="WarzonePlayer"></div><div class="field"><label>Spielmodus</label><select data-field="warzoneMode"><option>Battle Royale</option><option>Resurgence</option><option>Training</option></select></div><button class="btn btn-primary" data-save-fields="warzone">Profil speichern</button></div></div>
+</section>
+
+<!-- BO2 -->
+<section class="page" id="page-bo2">
+  <div class="hero"><div class="eyebrow">Game setup / 04</div><h1><span class="rainbow">Black Ops 2</span></h1><p>BO2-Konfiguration mit eigenen Reglern, Anzeigeoptionen und persönlichen Profilwerten.</p><div class="hero-buttons"><span class="pill">BLACK OPS II</span><span class="pill">CUSTOM PROFILE</span></div></div>
+  <div class="content-grid"><div class="card"><h3>Black Ops 2 Optionen</h3><p class="desc">Verwalte dein Dashboard-Profil.</p><div class="option-list" id="bo2Options"></div></div>
+  <div class="card"><h3>BO2 Player Config</h3><div class="field"><label>Spielername</label><input data-field="bo2Name" maxlength="24" placeholder="BO2Player"></div><div class="field"><label>Spielmodus</label><select data-field="bo2Mode"><option>Multiplayer</option><option>Zombies</option><option>Custom Games</option><option>Local Match</option></select></div><div class="field"><label>Fadenkreuz-Stil</label><select data-field="bo2Crosshair"><option>Standard</option><option>Minimal</option><option>Dot</option></select></div><button class="btn btn-primary" data-save-fields="bo2">BO2-Profil speichern</button></div></div>
+</section>
+
+<!-- NO RECOIL -->
+<section class="page" id="page-norecoil">
+  <div class="hero"><div class="eyebrow">Aim control / 01</div><h1><span class="rainbow">No Recoil</span></h1><p>Ein umfangreiches Einstellungsmenü mit Stärke-Regler, horizontalen und vertikalen Werten sowie Profiloptionen.</p></div>
+  <div class="content-grid">
+    <div class="card"><h3>No Recoil Konfiguration</h3><p class="desc">Passe die Werte an und beobachte die numerische Anzeige.</p>
+      <div id="recoilStrengthControl"></div>
+      <div id="recoilVerticalControl"></div>
+      <div id="recoilHorizontalControl"></div>
+      <div id="recoilStabilityControl"></div>
+      <div class="notice">Die Regler speichern nur Werte in diesem Dashboard. Sie greifen nicht in den Spielcode oder die Controller-Ausgabe ein.</div>
+    </div>
+    <div class="card"><h3>Weitere Optionen</h3><p class="desc">Zusätzliche Präferenzen für deine Konfiguration.</p><div class="option-list" id="norecoilOptions"></div>
+      <div class="field"><label>Konfigurationsprofil</label><select data-field="recoilPreset"><option>Balanced</option><option>Low</option><option>Medium</option><option>High</option><option>Custom</option></select></div>
+      <button class="btn btn-primary" data-save-fields="norecoil">Konfiguration speichern</button>
+    </div>
+  </div>
+</section>
+
+<!-- RECOIL CONTROL -->
+<section class="page" id="page-recoil">
+  <div class="hero"><div class="eyebrow">Aim control / 02</div><h1><span class="rainbow">Recoil Control</span></h1><p>Eine detaillierte Oberfläche zur Anpassung und Speicherung von Kontrollwerten.</p></div>
+  <div class="content-grid"><div class="card"><h3>Kontrollwerte</h3><div id="recoilPatternControl"></div><div id="recoilCompControl"></div><div id="recoilSpeedControl"></div><div id="recoilSmoothingControl"></div></div>
+  <div class="card"><h3>Zusatzoptionen</h3><div class="option-list" id="recoilOptions"></div><div class="field"><label>Preset</label><select data-field="recoilControlPreset"><option>Default</option><option>Precision</option><option>Comfort</option><option>Custom</option></select></div><button class="btn btn-primary" data-save-fields="recoilcontrol">Werte speichern</button></div></div>
+</section>
+
+<!-- AIM -->
+<section class="page" id="page-aim">
+  <div class="hero"><div class="eyebrow">Aim / 03</div><h1><span class="rainbow">Aim Settings</span></h1><p>Empfindlichkeit, Deadzone, Zielpräferenzen und Trainingsoptionen an einem Ort.</p></div>
+  <div class="content-grid"><div class="card"><h3>Controller Einstellungen</h3><div id="aimSensitivityControl"></div><div id="aimDeadzoneControl"></div><div id="aimResponseControl"></div><div id="aimAccelerationControl"></div></div>
+  <div class="card"><h3>Aim Optionen</h3><div class="option-list" id="aimOptions"></div></div></div>
+</section>
+
+<!-- SENSITIVITY -->
+<section class="page" id="page-sensitivity">
+  <div class="hero"><div class="eyebrow">Controller / 04</div><h1><span class="rainbow">Sensitivity</span></h1><p>Mehrere Regler für horizontale und vertikale Empfindlichkeit.</p></div>
+  <div class="content-grid"><div class="card"><h3>Empfindlichkeit</h3><div id="sensHorizontalControl"></div><div id="sensVerticalControl"></div><div id="sensADSControl"></div><div id="sensScopeControl"></div><div id="sensTurnControl"></div></div>
+  <div class="card"><h3>Empfindlichkeitsprofil</h3><div class="field"><label>Preset</label><select data-field="sensitivityPreset"><option>Default</option><option>Low Sens</option><option>Medium Sens</option><option>High Sens</option><option>Custom</option></select></div><div class="option-list" id="sensitivityOptions"></div><button class="btn btn-primary" data-save-fields="sensitivity">Profil speichern</button></div></div>
+</section>
+
+<!-- CROSSHAIR -->
+<section class="page" id="page-crosshair">
+  <div class="hero"><div class="eyebrow">Visual setup / 05</div><h1><span class="rainbow">Crosshair</span></h1><p>Größe, Dicke, Abstand, Transparenz und Farbe einstellen.</p></div>
+  <div class="content-grid"><div class="card"><h3>Crosshair Parameter</h3><div id="crossSizeControl"></div><div id="crossThicknessControl"></div><div id="crossGapControl"></div><div id="crossOpacityControl"></div><div class="field"><label>Farbe</label><select data-field="crosshairColor"><option>Neon Green</option><option>Cyber Blue</option><option>Neon Pink</option><option>White</option><option>Neon Purple</option></select></div></div>
+  <div class="card"><h3>Vorschau</h3><div style="height:220px;display:grid;place-items:center;background:#08080d;border:1px solid var(--border);border-radius:13px;position:relative;overflow:hidden"><div id="crosshairPreview" style="position:relative;width:30px;height:30px;color:#44f6aa"><span style="position:absolute;width:2px;height:30px;left:14px;background:currentColor"></span><span style="position:absolute;height:2px;width:30px;top:14px;background:currentColor"></span></div></div><p class="desc" style="margin-top:12px">Die Vorschau zeigt deine Crosshair-Einstellungen innerhalb dieser Seite.</p><div class="option-list" id="crosshairOptions"></div></div></div>
+</section>
+
+<!-- VISUALS -->
+<section class="page" id="page-visuals">
+  <div class="hero"><div class="eyebrow">Visual setup / 06</div><h1><span class="rainbow">Visuals / ESP</span></h1><p>Verwalte lokale Visualisierungsoptionen, Overlay-Stil und Anzeigepräferenzen.</p></div>
+  <div class="content-grid"><div class="card"><h3>Visual Optionen</h3><div class="option-list" id="visualOptions"></div></div>
+  <div class="card"><h3>Visual Stil</h3><div id="visualOpacityControl"></div><div id="visualScaleControl"></div><div class="field"><label>Akzentfarbe</label><select id="accentColor"><option value="#a855f7">Neon Purple</option><option value="#24e5ff">Cyber Blue</option><option value="#ff38a8">Neon Pink</option><option value="#44f6aa">Neon Green</option><option value="#ffad42">Neon Orange</option></select></div><button class="btn btn-primary" id="applyAccent">Farbe anwenden</button></div></div>
+</section>
+
+<!-- HUD -->
+<section class="page" id="page-hud">
+  <div class="hero"><div class="eyebrow">Interface / 07</div><h1><span class="rainbow">HUD Settings</span></h1><p>Konfiguriere die Elemente, Größe und Transparenz deiner Dashboard-Anzeige.</p></div>
+  <div class="content-grid"><div class="card"><h3>HUD Optionen</h3><div class="option-list" id="hudOptions"></div></div><div class="card"><h3>HUD Layout</h3><div id="hudScaleControl"></div><div id="hudOpacityControl"></div><div id="hudSpacingControl"></div><div class="field"><label>Position</label><select data-field="hudPosition"><option>Oben links</option><option>Oben rechts</option><option>Unten links</option><option>Unten rechts</option><option>Zentriert</option></select></div><button class="btn btn-primary" data-save-fields="hud">HUD speichern</button></div></div>
+</section>
+
+<!-- FOV -->
+<section class="page" id="page-fov">
+  <div class="hero"><div class="eyebrow">Display / 08</div><h1><span class="rainbow">FOV Settings</span></h1><p>Verwalte deine Sichtfeld-Präferenz und zugehörige Anzeigeoptionen.</p></div>
+  <div class="content-grid"><div class="card"><h3>Field of View</h3><div id="fovMainControl"></div><div id="fovADSControl"></div><div id="fovVehicleControl"></div><div class="notice">Die FOV-Regler speichern Anzeigepräferenzen. Ob ein Spiel diese Werte unterstützt, hängt vom jeweiligen Spiel ab.</div></div><div class="card"><h3>FOV Optionen</h3><div class="option-list" id="fovOptions"></div><div class="field"><label>FOV Preset</label><select data-field="fovPreset"><option>Standard</option><option>Wide</option><option>Custom</option></select></div><button class="btn btn-primary" data-save-fields="fov">FOV speichern</button></div></div>
+</section>
+
+<!-- PLAYERS -->
+<section class="page" id="page-players">
+  <div class="hero"><div class="eyebrow">Personal / 09</div><h1><span class="rainbow">Player List</span></h1><p>Verwalte deine eigene lokale Spielerliste und ergänze Notizen.</p></div>
+  <div class="content-grid"><div class="card"><h3>Spieler verwalten</h3><div class="field"><label>Spielername</label><input id="newPlayer" maxlength="24" placeholder="Spielername eingeben"></div><button class="btn btn-primary" id="addPlayer">+ Spieler hinzufügen</button><div id="playerList" style="margin-top:15px"></div></div>
+  <div class="card"><h3>Notizen</h3><div class="field"><label>Persönliche Notiz</label><input id="playerNote" maxlength="180" placeholder="Notiz eingeben"></div><div class="notice">Die Liste wird lokal gespeichert und ruft keine Live-Spielerdaten ab.</div></div></div>
+</section>
+
+<!-- PROFILES -->
+<section class="page" id="page-profiles">
+  <div class="hero"><div class="eyebrow">Personal / 10</div><h1><span class="rainbow">Profiles</span></h1><p>Wähle eine Voreinstellung oder sichere deine aktuellen Dashboard-Werte.</p></div>
+  <div class="profile-grid">
+    <div class="profile"><span class="pill">01 / BALANCED</span><h3>Balanced Setup</h3><p>Ausgewogene Darstellung und Animationen.</p><button class="btn" data-profile="balanced">Profil laden</button></div>
+    <div class="profile"><span class="pill">02 / COMPETITIVE</span><h3>Competitive Setup</h3><p>Kompakte Oberfläche mit reduzierten Effekten.</p><button class="btn" data-profile="competitive">Profil laden</button></div>
+    <div class="profile"><span class="pill">03 / IMMERSION</span><h3>Immersion Setup</h3><p>Atmosphärisches Layout mit Neon-Effekten.</p><button class="btn" data-profile="immersion">Profil laden</button></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Import / Export</h3><p class="desc">Speichere deine Einstellungen als JSON oder importiere eine Datei.</p><div class="hero-buttons"><button class="btn btn-primary" id="exportBtn">Einstellungen exportieren</button><button class="btn" id="importBtn">JSON importieren</button><input class="hidden" type="file" id="importFile" accept=".json,application/json"><button class="btn" id="resetBtn">Zurücksetzen</button></div></div>
+</section>
+
+<!-- SETTINGS -->
+<section class="page" id="page-settings">
+  <div class="hero"><div class="eyebrow">System / 11</div><h1><span class="rainbow">Settings</span></h1><p>Allgemeine Dashboard-Optionen, Sound und gespeicherte Einstellungen.</p></div>
+  <div class="content-grid"><div class="card"><h3>Allgemeine Optionen</h3><div class="option-list" id="settingsOptions"></div></div><div class="card"><h3>Datensicherung</h3><p class="desc">Exportiere regelmäßig ein Backup deiner Profile.</p><div class="notice">Einstellungen werden im Browser gespeichert. Wenn du Browserdaten löschst, können diese verloren gehen.</div><button class="btn btn-primary" id="exportBtn2" style="margin-top:15px">Backup exportieren</button></div></div>
+</section>
+
+<div class="footer">SRYMODZ • GAMING DASHBOARD • CUSTOM SETUP</div>
+</main>
+</div>
+
+<!-- Celebration overlay -->
+<div class="celebration" id="celebration" role="dialog" aria-modal="true" aria-labelledby="celebrationTitle">
+  <canvas id="confettiCanvas"></canvas>
+  <div class="celebration-card">
+    <div class="celebration-icon">⚡🎉</div>
+    <h2 id="celebrationTitle"><span class="rainbow">JAILBREAK<br>AKTIVIERT!</span></h2>
+    <p>WELCOME TO SRYMODZ JAILBREAK PS5<br>Dein Gaming-Dashboard ist bereit.</p>
+    <button class="btn btn-primary" id="closeCelebration">LET'S GO ✦</button>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+"use strict";
+
+const KEY = "srymodz_advanced_dashboard_v2";
+const defaultState = {
+  toggles:{}, values:{}, fields:{},
+  players:["SryModzPlayer","NightRunner","GhostPlayer"],
+  sound:false, accent:"#a855f7", note:""
+};
+let state=load();
+let toastTimer=null;
+let audioCtx=null;
+let confettiFrame=null;
+let confettiPieces=[];
+let confettiEnd=0;
+
+function load(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(KEY)||"{}");
+    return {
+      ...structuredClone(defaultState),...saved,
+      toggles:{...(saved.toggles||{})},
+      values:{...(saved.values||{})},
+      fields:{...(saved.fields||{})},
+      players:Array.isArray(saved.players)?saved.players.filter(x=>typeof x==="string").slice(0,100):[...defaultState.players]
+    };
+  }catch{return structuredClone(defaultState)}
+}
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(state))}
+  catch{toast("Browser-Speicherung ist nicht verfügbar.")}
+  updateStats();
+}
+function toast(message){
+  const el=document.getElementById("toast");
+  el.textContent=message;el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove("show"),2600);
+}
+function sound(){
+  if(!state.sound)return;
+  try{
+    const Ctx=window.AudioContext||window.webkitAudioContext;
+    if(!Ctx)return;
+    audioCtx ||= new Ctx();
+    const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+    osc.type="sine";osc.frequency.value=740;
+    gain.gain.setValueAtTime(.055,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.18);
+    osc.connect(gain);gain.connect(audioCtx.destination);
+    osc.start();osc.stop(audioCtx.currentTime+.18);
+  }catch{}
+}
+function navigate(name){
+  const page=document.getElementById("page-"+name);
+  if(!page)return;
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  page.classList.add("active");
+  document.querySelectorAll(".nav[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===name));
+  window.scrollTo({top:0,behavior:"smooth"});sound();
+}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.page)));
+document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.goto)));
+
+const optionSets={
+  gta6Options:[
+    ["gta6_hud","Custom HUD","HUD-Präferenz verwalten."],
+    ["gta6_map","Map Panel","Kartenpanel im Dashboard anzeigen."],
+    ["gta6_vehicle","Fahrzeug-Panel","Fahrzeuganzeige aktivieren."],
+    ["gta6_stats","Statistik-Panel","Statistikansicht aktivieren."],
+    ["gta6_weather","Wetteranzeige","Wetterinformationen darstellen."],
+    ["gta6_notifications","Benachrichtigungen","Dashboard-Hinweise anzeigen."]
+  ],
+  gta5Options:[
+    ["gta5_hud","Custom HUD","HUD-Präferenz speichern."],
+    ["gta5_vehicle","Fahrzeug-Panel","Fahrzeuganzeige aktivieren."],
+    ["gta5_map","Map Panel","Kartenansicht aktivieren."],
+    ["gta5_weather","Wetter-Info","Wetteranzeige verwalten."],
+    ["gta5_session","Session-Info","Sitzungsanzeige aktivieren."],
+    ["gta5_stats","Statistik-Panel","Statistikansicht aktivieren."]
+  ],
+  warzoneOptions:[
+    ["wz_hud","Custom HUD","Individuelles HUD-Profil."],
+    ["wz_training","Trainingsprofil","Trainingspräferenz speichern."],
+    ["wz_hitmarker","Hitmarker-Ansicht","Anzeigepräferenz verwalten."],
+    ["wz_minimap","Minimap-Panel","Kartenpanel anzeigen."],
+    ["wz_stats","Statistik-Panel","Statistikansicht aktivieren."],
+    ["wz_notifications","Benachrichtigungen","Hinweise im Dashboard aktivieren."]
+  ],
+  bo2Options:[
+    ["bo2_hud","Custom HUD","BO2 HUD-Präferenz speichern."],
+    ["bo2_crosshair","Crosshair-Anzeige","Fadenkreuzprofil verwalten."],
+    ["bo2_hitmarker","Hitmarker-Ansicht","Anzeigepräferenz speichern."],
+    ["bo2_training","Trainingsprofil","Trainingsoptionen verwalten."],
+    ["bo2_stats","Statistik-Panel","Statistikansicht aktivieren."],
+    ["bo2_notifications","Benachrichtigungen","Hinweise aktivieren."]
+  ],
+  norecoilOptions:[
+    ["nr_enabled","No Recoil Profil","Lokalen Konfigurationsstatus speichern."],
+    ["nr_horizontal","Horizontaler Wert","Horizontalen Reglerwert berücksichtigen."],
+    ["nr_vertical","Vertikaler Wert","Vertikalen Reglerwert berücksichtigen."],
+    ["nr_stability","Stabilitätsprofil","Stabilitätspräferenz speichern."],
+    ["nr_custom","Custom Preset","Eigenes Preset markieren."]
+  ],
+  recoilOptions:[
+    ["rc_enabled","Recoil-Profil","Profilstatus speichern."],
+    ["rc_smooth","Smooth Visual","Sanfte UI-Übergänge verwenden."],
+    ["rc_pattern","Pattern-Anzeige","Kontrollwerte darstellen."],
+    ["rc_assist","Trainingshinweise","Hinweise im Dashboard anzeigen."]
+  ],
+  aimOptions:[
+    ["aim_dot","Zielpunkt-Vorschau","Zielpunkt im Dashboard anzeigen."],
+    ["aim_ring","Zielring-Vorschau","Ringdarstellung aktivieren."],
+    ["aim_smooth","Smooth Visual","Sanfte Übergänge verwenden."],
+    ["aim_training","Trainingshinweise","Trainingshinweise anzeigen."],
+    ["aim_profile","Aim-Profil","Profiloption aktivieren."]
+  ],
+  sensitivityOptions:[
+    ["sens_h_enabled","Horizontaler Wert","Horizontalen Wert speichern."],
+    ["sens_v_enabled","Vertikaler Wert","Vertikalen Wert speichern."],
+    ["sens_ads_enabled","ADS-Wert","ADS-Präferenz speichern."],
+    ["sens_curve","Response Curve","Response-Curve-Präferenz markieren."]
+  ],
+  crosshairOptions:[
+    ["cross_dot","Center Dot","Mittelpunkt aktivieren."],
+    ["cross_outline","Outline","Kontur in der Vorschau aktivieren."],
+    ["cross_dynamic","Dynamic Preview","Dynamische Vorschau aktivieren."]
+  ],
+  visualOptions:[
+    ["vis_esp","ESP-Panel","Lokales Visual-Panel aktivieren."],
+    ["vis_names","Namensanzeige","Namen in der lokalen Oberfläche anzeigen."],
+    ["vis_boxes","Box-Overlay","Rahmen in der Vorschau anzeigen."],
+    ["vis_distance","Distanzanzeige","Beispielanzeige aktivieren."],
+    ["vis_radar","Radar-Panel","Radar-Panel in der Oberfläche aktivieren."],
+    ["vis_glow","Glow-Effekt","Neon-Effekt aktivieren."],
+    ["vis_health","Health-Panel","Health-Panel anzeigen."],
+    ["vis_skeleton","Skeleton-Vorschau","Vorschauoption aktivieren."]
+  ],
+  hudOptions:[
+    ["hud_health","Health Bar","Health-Anzeige aktivieren."],
+    ["hud_ammo","Ammo Panel","Munitionspanel anzeigen."],
+    ["hud_compass","Kompass","Kompassanzeige aktivieren."],
+    ["hud_clock","Uhr","Uhranzeige aktivieren."],
+    ["hud_fps","FPS-Anzeige","FPS-Label im Dashboard anzeigen."],
+    ["hud_notifications","Notifications","Hinweise aktivieren."],
+    ["hud_minimal","Minimal HUD","Reduziertes Layout markieren."]
+  ],
+  fovOptions:[
+    ["fov_enabled","FOV-Profil","FOV-Präferenz speichern."],
+    ["fov_ads","ADS FOV","ADS-Präferenz markieren."],
+    ["fov_vehicle","Fahrzeug FOV","Fahrzeugwert berücksichtigen."],
+    ["fov_preview","FOV-Vorschau","Vorschauoption aktivieren."]
+  ],
+  settingsOptions:[
+    ["setting_animations","Animationen","Übergänge aktivieren."],
+    ["setting_compact","Kompaktes Layout","Abstände reduzieren."],
+    ["setting_notifications","Hinweise","Statusmeldungen anzeigen."],
+    ["setting_glow","Neon-Effekte","Leuchteffekte aktivieren."]
+  ]
+};
+
+function renderOptions(id,items){
+  const root=document.getElementById(id);if(!root)return;
+  root.replaceChildren();
+  items.forEach(([key,title,desc])=>{
+    const row=document.createElement("div");row.className="option";
+    const info=document.createElement("div");
+    const name=document.createElement("div");name.className="option-title";name.textContent=title;
+    const sub=document.createElement("div");sub.className="option-desc";sub.textContent=desc;
+    info.append(name,sub);
+    const sw=document.createElement("button");
+    sw.type="button";sw.className="switch"+(state.toggles[key]?" on":"");
+    sw.setAttribute("role","switch");sw.setAttribute("aria-checked",String(!!state.toggles[key]));
+    sw.setAttribute("aria-label",title);
+    sw.addEventListener("click",()=>{
+      state.toggles[key]=!state.toggles[key];
+      sw.classList.toggle("on",state.toggles[key]);
+      sw.setAttribute("aria-checked",String(state.toggles[key]));
+      save();sound();applyCompact();
+    });
+    row.append(info,sw);root.append(row);
+  });
+}
+
+const sliders=[
+  ["recoilStrengthControl","recoilStrength","No Recoil Strength",0,100,50,"%"],
+  ["recoilVerticalControl","recoilVertical","Vertical Value",0,100,50,"%"],
+  ["recoilHorizontalControl","recoilHorizontal","Horizontal Value",0,100,50,"%"],
+  ["recoilStabilityControl","recoilStability","Stability",0,100,70,"%"],
+  ["recoilPatternControl","recoilPattern","Pattern Value",0,100,45,"%"],
+  ["recoilCompControl","recoilComp","Control Amount",0,100,50,"%"],
+  ["recoilSpeedControl","recoilSpeed","Control Speed",1,20,10,""],
+  ["recoilSmoothingControl","recoilSmoothing","Smoothing",0,100,35,"%"],
+  ["aimSensitivityControl","aimSensitivity","Aim Sensitivity",1,20,6,""],
+  ["aimDeadzoneControl","aimDeadzone","Stick Deadzone",0,30,8,"%"],
+  ["aimResponseControl","aimResponse","Response Curve",0,100,50,"%"],
+  ["aimAccelerationControl","aimAcceleration","Aim Acceleration",0,100,20,"%"],
+  ["sensHorizontalControl","sensHorizontal","Horizontal Sensitivity",1,20,7,""],
+  ["sensVerticalControl","sensVertical","Vertical Sensitivity",1,20,6,""],
+  ["sensADSControl","sensADS","ADS Sensitivity",1,20,5,""],
+  ["sensScopeControl","sensScope","Scope Sensitivity",1,20,5,""],
+  ["sensTurnControl","sensTurn","Turn Speed",1,20,8,""],
+  ["crossSizeControl","crossSize","Crosshair Size",2,60,20," px"],
+  ["crossThicknessControl","crossThickness","Crosshair Thickness",1,10,2," px"],
+  ["crossGapControl","crossGap","Crosshair Gap",0,30,5," px"],
+  ["crossOpacityControl","crossOpacity","Crosshair Opacity",10,100,100,"%"],
+  ["visualOpacityControl","visualOpacity","Visual Opacity",10,100,80,"%"],
+  ["visualScaleControl","visualScale","Visual Scale",50,150,100,"%"],
+  ["hudScaleControl","hudScale","HUD Scale",50,150,100,"%"],
+  ["hudOpacityControl","hudOpacity","HUD Opacity",10,100,85,"%"],
+  ["hudSpacingControl","hudSpacing","HUD Spacing",0,50,15," px"],
+  ["fovMainControl","fovMain","Main FOV",60,120,90,""],
+  ["fovADSControl","fovADS","ADS FOV",50,120,85,""],
+  ["fovVehicleControl","fovVehicle","Vehicle FOV",60,120,90,""]
+];
+
+function renderSlider(spec){
+  const [containerId,key,label,min,max,initial,suffix]=spec;
+  const root=document.getElementById(containerId);if(!root)return;
+  if(!(key in state.values))state.values[key]=initial;
+  state.values[key]=Math.max(min,Math.min(max,Number(state.values[key])||0));
+  const box=document.createElement("div");box.className="control";
+  const head=document.createElement("div");head.className="control-head";
+  const text=document.createElement("label");text.htmlFor="range-"+key;text.textContent=label;
+  const output=document.createElement("output");output.id="out-"+key;
+  output.textContent=state.values[key]+suffix;
+  const input=document.createElement("input");input.type="range";input.id="range-"+key;
+  input.min=min;input.max=max;input.value=state.values[key];
+  input.setAttribute("aria-label",label);
+  input.addEventListener("input",()=>{
+    state.values[key]=Number(input.value);
+    output.textContent=input.value+suffix;save();
+    if(key.startsWith("cross"))updateCrosshair();
+  });
+  head.append(text,output);box.append(head,input);root.replaceChildren(box);
+}
+function renderAll(){
+  Object.entries(optionSets).forEach(([id,items])=>renderOptions(id,items));
+  sliders.forEach(renderSlider);
+}
+
+function updateStats(){
+  document.getElementById("enabledCount").textContent=Object.values(state.toggles).filter(Boolean).length;
+}
+function applyCompact(){
+  const compact=!!state.toggles.setting_compact;
+  document.querySelectorAll(".stat,.card,.game-card").forEach(el=>{
+    el.style.borderRadius=compact?"10px":"";
+  });
+  document.querySelectorAll(".stat").forEach(el=>el.style.padding=compact?"12px":"");
+  document.body.classList.toggle("no-animations",state.toggles.setting_animations===false);
+  document.querySelectorAll(".hero").forEach(el=>el.style.animation=state.toggles.setting_glow?"glow 4s ease-in-out infinite":"none");
+}
+function applyAccent(color){
+  if(!/^#[0-9a-f]{6}$/i.test(color))return;
+  state.accent=color;
+  document.documentElement.style.setProperty("--purple",color);
+  save();toast("Akzentfarbe aktualisiert.");
+}
+document.getElementById("applyAccent").addEventListener("click",()=>applyAccent(document.getElementById("accentColor").value));
+
+function saveFields(group){
+  const values={};
+  document.querySelectorAll("[data-field]").forEach(el=>{
+    if(el.dataset.field.startsWith(group))values[el.dataset.field]=el.value;
+  });
+  if(group==="gta6"||group==="gta5"||group==="warzone"||group==="bo2"||group==="norecoil"||group==="recoilcontrol"||group==="sensitivity"||group==="hud"||group==="fov"){
+    document.querySelectorAll("#page-"+group+" [data-field]").forEach(el=>values[el.dataset.field]=el.value);
+  }
+  state.fields[group]=values;save();toast("Profil gespeichert.");sound();
+}
+document.querySelectorAll("[data-save-fields]").forEach(btn=>btn.addEventListener("click",()=>saveFields(btn.dataset.saveFields)));
+
+function restoreFields(){
+  Object.values(state.fields).forEach(group=>{
+    if(!group||typeof group!=="object")return;
+    Object.entries(group).forEach(([key,value])=>{
+      const el=document.querySelector('[data-field="'+CSS.escape(key)+'"]');
+      if(el&&typeof value==="string")el.value=value;
+    });
+  });
+  document.getElementById("playerNote").value=state.note||"";
+}
+function updateCrosshair(){
+  const preview=document.getElementById("crosshairPreview");
+  if(!preview)return;
+  const size=Number(state.values.crossSize||20);
+  const thickness=Number(state.values.crossThickness||2);
+  const gap=Number(state.values.crossGap||5);
+  const opacity=Number(state.values.crossOpacity||100)/100;
+  const colors={"Neon Green":"#44f6aa","Cyber Blue":"#24e5ff","Neon Pink":"#ff38a8","White":"#ffffff","Neon Purple":"#a855f7"};
+  const chosen=document.querySelector('[data-field="crosshairColor"]')?.value||"Neon Green";
+  preview.style.width=size+"px";preview.style.height=size+"px";preview.style.color=colors[chosen]||"#44f6aa";preview.style.opacity=opacity;
+  preview.replaceChildren();
+  const vertical=document.createElement("span");
+  Object.assign(vertical.style,{position:"absolute",width:thickness+"px",height:size+"px",left:"50%",top:"50%",transform:"translate(-50%,-50%)",background:"currentColor",borderRadius:"2px"});
+  const horizontal=document.createElement("span");
+  Object.assign(horizontal.style,{position:"absolute",height:thickness+"px",width:size+"px",left:"50%",top:"50%",transform:"translate(-50%,-50%)",background:"currentColor",borderRadius:"2px"});
+  const dot=document.createElement("span");
+  Object.assign(dot.style,{position:"absolute",width:"4px",height:"4px",left:"50%",top:"50%",transform:"translate(-50%,-50%)",background:"currentColor",borderRadius:"50%",display:state.toggles.cross_dot?"block":"none"});
+  const offset=Math.max(0,gap);
+  vertical.style.height=Math.max(4,size-offset*2)+"px";
+  horizontal.style.width=Math.max(4,size-offset*2)+"px";
+  preview.append(vertical,horizontal,dot);
+}
+document.querySelector('[data-field="crosshairColor"]').addEventListener("change",updateCrosshair);
+
+function renderPlayers(){
+  const root=document.getElementById("playerList");root.replaceChildren();
+  if(!state.players.length){
+    const p=document.createElement("p");p.className="desc";p.textContent="Noch keine Spieler hinzugefügt.";root.append(p);return;
+  }
+  state.players.forEach((name,index)=>{
+    const row=document.createElement("div");row.className="player-row";
+    const info=document.createElement("div");
+    const title=document.createElement("div");title.className="player-name";title.textContent=name;
+    const meta=document.createElement("div");meta.className="player-meta";meta.textContent="Lokaler Eintrag";
+    info.append(title,meta);
+    const remove=document.createElement("button");remove.className="btn";remove.textContent="Entfernen";remove.type="button";
+    remove.addEventListener("click",()=>{state.players.splice(index,1);save();renderPlayers();toast("Spieler entfernt.")});
+    row.append(info,remove);root.append(row);
+  });
+}
+document.getElementById("addPlayer").addEventListener("click",()=>{
+  const input=document.getElementById("newPlayer"),name=input.value.trim();
+  if(!name){toast("Bitte einen Spielernamen eingeben.");input.focus();return}
+  if(state.players.some(p=>p.toLowerCase()===name.toLowerCase())){toast("Dieser Name steht bereits in der Liste.");return}
+  if(state.players.length>=100){toast("Die Liste ist voll.");return}
+  state.players.push(name);input.value="";save();renderPlayers();toast("Spieler hinzugefügt.");
+});
+document.getElementById("newPlayer").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("addPlayer").click()});
+document.getElementById("playerNote").addEventListener("input",e=>{state.note=e.target.value;save()});
+
+function applyProfile(name){
+  const profiles={
+    balanced:{setting_animations:true,setting_compact:false,setting_notifications:true,setting_glow:true,vis_glow:true,aim_training:true},
+    competitive:{setting_animations:false,setting_compact:true,setting_notifications:false,setting_glow:false,vis_glow:false,aim_training:true},
+    immersion:{setting_animations:true,setting_compact:false,setting_notifications:false,setting_glow:true,vis_glow:true,vis_radar:false}
+  };
+  if(!profiles[name])return;
+  Object.assign(state.toggles,profiles[name]);save();renderAll();applyCompact();updateCrosshair();toast("Profil geladen: "+name);sound();
+}
+document.querySelectorAll("[data-profile]").forEach(b=>b.addEventListener("click",()=>applyProfile(b.dataset.profile)));
+
+function exportSettings(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="srymodz-settings.json";document.body.append(a);a.click();a.remove();URL.revokeObjectURL(url);
+  toast("Einstellungen exportiert.");
+}
+document.getElementById("exportBtn").addEventListener("click",exportSettings);
+document.getElementById("exportBtn2").addEventListener("click",exportSettings);
+document.getElementById("importBtn").addEventListener("click",()=>document.getElementById("importFile").click());
+document.getElementById("importFile").addEventListener("change",e=>{
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(String(reader.result));
+      if(!data||typeof data!=="object"||Array.isArray(data))throw new Error("Invalid");
+      state={...structuredClone(defaultState),...data,toggles:{...(data.toggles||{})},values:{...(data.values||{})},fields:{...(data.fields||{})},players:Array.isArray(data.players)?data.players.filter(x=>typeof x==="string").slice(0,100):[]};
+      save();renderAll();restoreFields();renderPlayers();applyCompact();updateCrosshair();
+      document.getElementById("soundBtn").textContent="♪ Sound: "+(state.sound?"An":"Aus");
+      document.getElementById("accentColor").value=state.accent||defaultState.accent;
+      applyAccent(state.accent||defaultState.accent);toast("Einstellungen importiert.");
+    }catch{toast("Die JSON-Datei konnte nicht gelesen werden.")}
+  };
+  reader.readAsText(file);e.target.value="";
+});
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  if(!confirm("Alle gespeicherten SryModz-Einstellungen zurücksetzen?"))return;
+  state=structuredClone(defaultState);save();renderAll();restoreFields();renderPlayers();applyCompact();updateCrosshair();
+  document.getElementById("soundBtn").textContent="♪ Sound: Aus";
+  document.getElementById("accentColor").value=defaultState.accent;
+  applyAccent(defaultState.accent);toast("Einstellungen zurückgesetzt.");
+});
+
+document.getElementById("soundBtn").addEventListener("click",()=>{
+  state.sound=!state.sound;
+  document.getElementById("soundBtn").textContent="♪ Sound: "+(state.sound?"An":"Aus");
+  save();if(state.sound)sound();toast(state.sound?"Sound aktiviert.":"Sound deaktiviert.");
+});
+
+/* Confetti celebration */
+const celebration=document.getElementById("celebration");
+const canvas=document.getElementById("confettiCanvas");
+const ctx=canvas.getContext("2d");
+function resizeCanvas(){
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  canvas.width=Math.floor(window.innerWidth*dpr);
+  canvas.height=Math.floor(window.innerHeight*dpr);
+  canvas.style.width=window.innerWidth+"px";
+  canvas.style.height=window.innerHeight+"px";
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function launchConfetti(){
+  resizeCanvas();
+  const w=window.innerWidth,h=window.innerHeight;
+  const colors=["#ff38a8","#a855f7","#24e5ff","#44f6aa","#ffb33f","#ffffff","#f4ff67"];
+  confettiPieces=Array.from({length:260},()=>({
+    x:Math.random()*w,y:-Math.random()*h*.8,
+    width:4+Math.random()*7,height:5+Math.random()*10,
+    color:colors[Math.floor(Math.random()*colors.length)],
+    vx:(Math.random()-.5)*5,vy:2+Math.random()*6,
+    rotation:Math.random()*Math.PI,spin:(Math.random()-.5)*.2,
+    sway:Math.random()*2
+  }));
+  confettiEnd=performance.now()+6500;
+  if(confettiFrame)cancelAnimationFrame(confettiFrame);
+  drawConfetti();
+}
+function drawConfetti(){
+  const w=window.innerWidth,h=window.innerHeight;
+  ctx.clearRect(0,0,w,h);
+  confettiPieces.forEach(p=>{
+    p.x+=p.vx+Math.sin(p.y*.015)*p.sway;
+    p.y+=p.vy;p.rotation+=p.spin;
+    if(p.y>h+20){p.y=-20;p.x=Math.random()*w}
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rotation);
+    ctx.fillStyle=p.color;ctx.fillRect(-p.width/2,-p.height/2,p.width,p.height);ctx.restore();
+  });
+  if(performance.now()<confettiEnd&&celebration.classList.contains("show")){
+    confettiFrame=requestAnimationFrame(drawConfetti);
+  }else{
+    ctx.clearRect(0,0,w,h);confettiFrame=null;
+  }
+}
+function openCelebration(){
+  document.getElementById("heroTitle").innerHTML='Welcome to <span class="rainbow">SryModz Jailbreak PS5</span>';
+  celebration.classList.add("show");
+  document.body.style.overflow="hidden";
+  launchConfetti();sound();
+}
+function closeCelebration(){
+  celebration.classList.remove("show");
+  document.body.style.overflow="";
+  if(confettiFrame)cancelAnimationFrame(confettiFrame);
+  confettiFrame=null;ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+}
+document.getElementById("jailbreakBtn").addEventListener("click",openCelebration);
+document.getElementById("closeCelebration").addEventListener("click",closeCelebration);
+celebration.addEventListener("click",e=>{if(e.target===celebration)closeCelebration()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&celebration.classList.contains("show"))closeCelebration()});
+window.addEventListener("resize",()=>{if(celebration.classList.contains("show"))resizeCanvas()});
+
+renderAll();restoreFields();renderPlayers();updateStats();applyCompact();updateCrosshair();
+document.getElementById("accentColor").value=state.accent||defaultState.accent;
+document.documentElement.style.setProperty("--purple",state.accent||defaultState.accent);
+document.getElementById("soundBtn").textContent="♪ Sound: "+(state.sound?"An":"Aus");
+})();
+</script>
+</body>
+</html>
